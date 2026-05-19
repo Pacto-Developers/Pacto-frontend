@@ -24,7 +24,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#0f172a",
+  themeColor: "#3182f6",
 };
 
 export default function RootLayout({
@@ -34,9 +34,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={`${geist.variable} h-full antialiased`}>
-      <body className="min-h-full bg-slate-50 text-slate-900">
+      <body className="min-h-full bg-[#f2f4f6] text-foreground">
         <Providers>
-          <div className="mx-auto flex min-h-full w-full max-w-md flex-col bg-white shadow-xl">
+          <div className="mx-auto flex min-h-full w-full max-w-[480px] flex-col">
             <main className="flex-1 pb-20">{children}</main>
             <BottomNav />
           </div>
