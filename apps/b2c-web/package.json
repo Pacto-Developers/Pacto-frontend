@@ -1,0 +1,44 @@
+{
+  "name": "@pacto/b2c-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start --port 3000",
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.0.1",
+    "@pacto/api-client": "*",
+    "@pacto/types": "*",
+    "@tanstack/react-query": "^5.80.7",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.511.0",
+    "next": "16.2.6",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-hook-form": "^7.57.0",
+    "tailwind-merge": "^3.3.0",
+    "zod": "^3.25.56"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.5.2",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.6",
+    "eslint-config-prettier": "^10.1.5",
+    "jsdom": "^26.1.0",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^3.2.3"
+  }
+}

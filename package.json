@@ -1,0 +1,30 @@
+{
+  "name": "pacto",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "dev:b2c": "turbo dev --filter=@pacto/b2c-web",
+    "dev:admin": "turbo dev --filter=@pacto/admin-web",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "turbo test",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "eslint-config-prettier": "^10.1.5",
+    "prettier": "^3.5.3",
+    "turbo": "^2.5.4"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "npm@11.11.0"
+}
