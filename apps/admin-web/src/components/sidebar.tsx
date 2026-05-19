@@ -4,7 +4,8 @@ import type { NavItem } from "@pacto/auth";
 import type { Role } from "@pacto/types";
 import { ROLE_LABELS } from "@pacto/types";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, LogOut } from "lucide-react";
+import { PactoBrand } from "@/components/brand/pacto-brand";
+import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -19,10 +20,7 @@ export function Sidebar({ role, menus }: SidebarProps) {
   return (
     <aside className="flex w-60 shrink-0 flex-col border-r border-slate-200 bg-slate-900 text-slate-100">
       <div className="border-b border-slate-700 px-5 py-6">
-        <div className="flex items-center gap-2 text-lg font-bold">
-          <LayoutDashboard className="h-5 w-5 text-indigo-400" />
-          Pacto Admin
-        </div>
+        <PactoBrand size="md" variant="light" href="/" />
         <p className="mt-1 text-xs text-slate-400">{ROLE_LABELS[role]} 뷰</p>
       </div>
 

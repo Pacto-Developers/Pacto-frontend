@@ -1,0 +1,17 @@
+{
+  "name": "@pacto/assets",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./logos/logo.png": "./logos/logo.png",
+    "./logos/logo_all.png": "./logos/logo_all.png",
+    "./logos/logo_all_background.png": "./logos/logo_all_background.png"
+  },
+  "scripts": {
+    "lint": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5"
+  }
+}

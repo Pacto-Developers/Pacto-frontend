@@ -51,6 +51,15 @@ body {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 :root {
   /* Toss-style tokens (structure.md) */
   --toss-blue: #3182f6;

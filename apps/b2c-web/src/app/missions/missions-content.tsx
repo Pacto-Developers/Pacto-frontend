@@ -1,6 +1,7 @@
 "use client";
 
 import { MobileHeader } from "@/components/mobile/mobile-header";
+import { getAppPageHeaderOffset } from "@/components/mobile/app-page-header.constants";
 import {
   Accordion,
   AccordionContent,
@@ -11,7 +12,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { missions } from "@/lib/mock-data";
+import {
+  selectMissionList,
+  useMyMissions,
+  useSubmitMissionUrl,
+} from "@/lib/api/hooks";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -19,6 +25,10 @@ const tabs = ["진행 중", "완료", "전체"] as const;
 
 export function MissionsContent() {
   const [activeTab, setActiveTab] = useState<string>("진행 중");
+  const { data: result, isLoading } = useMyMissions();
+  const submitUrl = useSubmitMissionUrl();
+
+  const missions = selectMissionList(result);
   const list =
     activeTab === "전체"
       ? missions
@@ -27,12 +37,13 @@ export function MissionsContent() {
             ? m.status === "IN_PROGRESS"
             : m.status === "DONE",
         );
-  const showEmpty = list.length === 0;
+  const showEmpty = !isLoading && list.length === 0;
 
   return (
     <div className="flex min-h-full flex-col bg-[#f2f4f6]">
       <MobileHeader title="내 미션" />
 
+      <div style={{ paddingTop: getAppPageHeaderOffset() }}>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="px-4">
         <TabsList className="w-full">
           {tabs.map((tab) => (
@@ -44,7 +55,11 @@ export function MissionsContent() {
       </Tabs>
 
       <div className="flex-1 space-y-3 px-4 py-4">
-        {showEmpty ? (
+        {isLoading ? (
+          <div className="flex justify-center py-16">
+            <Loader2 className="size-8 animate-spin text-muted-foreground" />
+          </div>
+        ) : showEmpty ? (
           <Card className="rounded-2xl border-0 py-12 text-center shadow-none ring-0">
             <CardContent>
               <p className="mb-4 text-muted-foreground">
@@ -75,10 +90,28 @@ export function MissionsContent() {
                     <AccordionContent>
                       <form
                         className="flex gap-2"
-                        onSubmit={(e) => e.preventDefault()}
+                        onSubmit={async (e) => {
+                          e.preventDefault();
+                          const form = e.currentTarget;
+                          const input = form.elements.namedItem(
+                            "url",
+                          ) as HTMLInputElement;
+                          const url = input.value.trim();
+                          if (!url) return;
+                          await submitUrl.mutateAsync({
+                            escrowId: mission.id,
+                            url,
+                          });
+                          input.value = "";
+                        }}
                       >
-                        <Input placeholder="작성한 블로그 URL 입력" />
-                        <Button type="submit">제출</Button>
+                        <Input
+                          name="url"
+                          placeholder="작성한 블로그 URL 입력"
+                        />
+                        <Button type="submit" disabled={submitUrl.isPending}>
+                          {submitUrl.isPending ? "…" : "제출"}
+                        </Button>
                       </form>
                     </AccordionContent>
                   </AccordionItem>
@@ -87,6 +120,7 @@ export function MissionsContent() {
             </Card>
           ))
         )}
+      </div>
       </div>
     </div>
   );

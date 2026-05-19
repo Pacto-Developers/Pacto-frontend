@@ -33,11 +33,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${geist.variable} h-full antialiased`}>
-      <body className="min-h-full bg-[#f2f4f6] text-foreground">
+    <html
+      lang="ko"
+      className={`${geist.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
+      <body
+        className="min-h-full bg-[#f2f4f6] text-foreground"
+        suppressHydrationWarning
+      >
         <Providers>
           <div className="mx-auto flex min-h-full w-full max-w-[480px] flex-col">
-            <main className="flex-1 pb-20">{children}</main>
+            <main className="flex-1 pb-[90px]">{children}</main>
             <BottomNav />
           </div>
         </Providers>
