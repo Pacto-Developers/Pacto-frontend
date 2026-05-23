@@ -19,7 +19,7 @@ export function MobileHeader({
   backHref = "/explore",
   variant,
   showNotification = true,
-  notificationCount = 2,
+  notificationCount,
   className,
 }: MobileHeaderProps) {
   const layout = variant ?? (showBackButton ? "sub" : "main");

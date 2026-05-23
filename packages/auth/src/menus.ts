@@ -16,6 +16,7 @@ const agencyMenus: NavItem[] = [
 const advertiserMenus: NavItem[] = [
   { label: "대시보드", href: "/advertiser" },
   { label: "내 캠페인", href: "/advertiser/campaigns" },
+  { label: "에스크로·미션", href: "/advertiser/escrows" },
   { label: "리포트", href: "/advertiser/reports" },
   { label: "결제", href: "/advertiser/billing" },
 ];

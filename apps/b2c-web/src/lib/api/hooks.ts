@@ -1,7 +1,8 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { Campaign, Mission } from "@/lib/mock-data";
+import type { Campaign, Mission, WalletHistory } from "@/lib/mock-data";
+import type { WalletBalanceView } from "./wallet-types";
 import type { WithSource } from "./types";
 import {
   acceptMission,
@@ -12,9 +13,14 @@ import {
   getWalletBalance,
   getWalletHistories,
   submitMissionUrl,
+  withdrawWallet,
+  type WithdrawParams,
+  type WithdrawResult,
 } from "./services";
+import { fetchMe } from "./user";
 
 export const queryKeys = {
+  me: ["me"] as const,
   campaigns: ["campaigns"] as const,
   campaign: (id: string) => ["campaigns", id] as const,
   campaignGuidelines: (id: string) => ["campaigns", id, "guidelines"] as const,
@@ -22,6 +28,13 @@ export const queryKeys = {
   walletBalance: ["wallet", "balance"] as const,
   walletHistories: ["wallet", "histories"] as const,
 };
+
+export function useMe() {
+  return useQuery({
+    queryKey: queryKeys.me,
+    queryFn: fetchMe,
+  });
+}
 
 export function useCampaigns() {
   return useQuery({
@@ -46,24 +59,45 @@ export function useCampaignGuidelines(id: string) {
   });
 }
 
-export function useMyMissions() {
-  return useQuery({
-    queryKey: queryKeys.missions,
-    queryFn: getMyMissions,
+export function useMyMissions(status?: string) {
+  return useQuery<WithSource<Mission[]>>({
+    queryKey: status ? [...queryKeys.missions, status] : queryKeys.missions,
+    queryFn: () => getMyMissions(status),
   });
 }
 
 export function useWalletBalance() {
-  return useQuery({
+  return useQuery<WithSource<WalletBalanceView>>({
     queryKey: queryKeys.walletBalance,
     queryFn: getWalletBalance,
   });
 }
 
 export function useWalletHistories() {
-  return useQuery({
+  return useQuery<WithSource<WalletHistory[]>>({
     queryKey: queryKeys.walletHistories,
     queryFn: getWalletHistories,
+  });
+}
+
+export function useWithdrawWallet() {
+  const queryClient = useQueryClient();
+
+  return useMutation<WithSource<WithdrawResult>, Error, WithdrawParams>({
+    mutationFn: withdrawWallet,
+    onSuccess: (result) => {
+      queryClient.setQueryData<WithSource<WalletBalanceView>>(
+        queryKeys.walletBalance,
+        (prev) => ({
+          data: {
+            balance: result.data.remainingBalance,
+            lockedBalance: prev?.data.lockedBalance ?? 0,
+          },
+          source: result.source,
+        }),
+      );
+      void queryClient.invalidateQueries({ queryKey: queryKeys.walletHistories });
+    },
   });
 }
 
@@ -79,9 +113,14 @@ export function useAcceptMission(campaignId: string) {
 }
 
 export function useSubmitMissionUrl() {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: ({ escrowId, url }: { escrowId: string; url: string }) =>
       submitMissionUrl(escrowId, url),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.missions });
+    },
   });
 }
 

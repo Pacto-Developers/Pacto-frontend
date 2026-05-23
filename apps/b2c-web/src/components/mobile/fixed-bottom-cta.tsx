@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { mobileFixedClass } from "@/lib/mobile-layout";
 import { cn } from "@/lib/utils";
 
 type FixedBottomCTAProps = {
@@ -17,7 +18,12 @@ export function FixedBottomCTA({
   className,
 }: FixedBottomCTAProps) {
   return (
-    <div className="fixed bottom-0 left-1/2 z-50 w-full max-w-[480px] -translate-x-1/2 border-t border-border/50 bg-white/95 p-4 backdrop-blur">
+    <div
+      className={cn(
+        mobileFixedClass,
+        "bottom-0 border-t border-border/50 bg-white/95 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur",
+      )}
+    >
       <Button
         size="lg"
         className={cn(

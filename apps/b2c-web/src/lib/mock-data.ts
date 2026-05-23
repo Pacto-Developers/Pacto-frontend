@@ -72,7 +72,7 @@ export type Mission = {
   id: string;
   title: string;
   brand: string;
-  status: "LOCKED" | "IN_PROGRESS" | "DONE";
+  status: "LOCKED" | "IN_PROGRESS" | "DONE" | "CANCELED";
   reward: string;
 };
 

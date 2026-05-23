@@ -2,6 +2,7 @@
 export type ApiCampaign = {
   id?: string | number;
   campaignId?: string | number;
+  campaign_id?: string | number;
   title?: string;
   name?: string;
   brandName?: string;
@@ -9,8 +10,12 @@ export type ApiCampaign = {
   category?: string;
   categoryName?: string;
   rewardAmount?: number;
+  reward_point?: number;
   reward?: number;
   point?: number;
+  total_slots?: number;
+  remaining_slots?: number;
+  d_day?: number;
   currentParticipants?: number;
   participantCount?: number;
   current?: number;
@@ -27,12 +32,18 @@ export type ApiCampaign = {
   missionGuide?: string;
   missionGuides?: string[];
   guidelines?: string[];
+  requirements?: string[];
 };
 
 export type ApiMission = {
   id?: string | number;
   escrowId?: string | number;
+  escrow_id?: string | number;
   missionId?: string | number;
+  reward_point?: number;
+  rewardPoint?: number;
+  submittedUrl?: string | null;
+  submitted_url?: string | null;
   title?: string;
   campaignTitle?: string;
   brandName?: string;
@@ -40,6 +51,7 @@ export type ApiMission = {
   status?: string;
   rewardAmount?: number;
   reward?: number | string;
+  deadline?: string;
 };
 
 export type ApiWalletBalance = {
