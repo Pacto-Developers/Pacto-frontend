@@ -1,96 +1,94 @@
-export type ApiError = {
-  status: number;
-  message: string;
-};
+export {
+  ApiClientError,
+  apiFetch,
+  getApiBaseUrl,
+  getServerApiBaseUrl,
+  isApiConfigured,
+  resolveApiUrl,
+  unwrapList,
+} from "./client";
+export type { ApiError, ApiFetchOptions } from "./client";
 
-export class ApiClientError extends Error {
-  constructor(
-    public status: number,
-    message: string,
-  ) {
-    super(message);
-    this.name = "ApiClientError";
-  }
-}
+export { login, signupBlogger, signupBusiness, getMe } from "./auth";
 
-export function getApiBaseUrl(): string {
-  return (
-    process.env.API_URL ??
-    process.env.NEXT_PUBLIC_API_URL ??
-    ""
-  ).replace(/\/$/, "");
-}
+export {
+  createCampaign,
+  listCampaigns,
+  updateCampaignStatus,
+} from "./campaign";
+export type {
+  CampaignListItem,
+  CampaignStatus,
+  CreateCampaignRequest,
+  CreateCampaignResult,
+  ListCampaignsParams,
+  UpdateCampaignStatusResult,
+} from "./campaign";
 
-export function isApiConfigured(): boolean {
-  return Boolean(getApiBaseUrl());
-}
+export {
+  acceptMission,
+  approveMission,
+  cancelMission,
+  getMyMissions,
+  submitMissionUrl,
+} from "./mission";
+export type {
+  AcceptMissionResult,
+  ApproveMissionResult,
+  CancelMissionResult,
+  MissionCancelReason,
+  MissionListItem,
+  MissionStatus,
+  MyMissionsParams,
+  SubmitMissionResult,
+} from "./mission";
 
-/** 서버(라우트 핸들러)에서 백엔드 직접 호출 시 사용 */
-export function getServerApiBaseUrl(): string {
-  return getApiBaseUrl();
-}
+export { getPayment, preparePayment } from "./payment";
+export type {
+  PaymentDetail,
+  PreparePaymentRequest,
+  PreparePaymentResult,
+} from "./payment";
 
-/** 브라우저에서는 Next rewrite 프록시 경유 */
-export function resolveApiUrl(path: string): string {
-  const base = getApiBaseUrl();
-  if (typeof window === "undefined") {
-    return base ? `${base}${path}` : path;
-  }
-  return path;
-}
+export {
+  cancelEscrow,
+  listEscrows,
+  releaseEscrow,
+} from "./escrow";
+export type {
+  CancelEscrowResult,
+  EscrowListItem,
+  EscrowStatus,
+  ListEscrowsParams,
+  ReleaseEscrowResult,
+} from "./escrow";
 
-export type ApiFetchOptions = RequestInit & {
-  /** Bearer 토큰 (없으면 쿠키 credentials만 사용) */
-  token?: string;
-};
+export {
+  getWalletBalance,
+  getWalletHistories,
+  withdrawWallet,
+} from "./wallet";
+export type {
+  WalletBalance,
+  WalletHistoryItem,
+  WalletHistoryType,
+  WithdrawWalletRequest,
+  WithdrawWalletResult,
+} from "./wallet";
 
-export async function apiFetch<T>(
-  path: string,
-  init?: ApiFetchOptions,
-): Promise<T> {
-  if (!isApiConfigured()) {
-    throw new ApiClientError(0, "API URL is not configured");
-  }
+export type { Paginated } from "./pagination";
 
-  const { token, headers, ...rest } = init ?? {};
+export type {
+  ApiEnvelope,
+  ApiRole,
+  LoginRequest,
+  LoginResult,
+  SignupBloggerRequest,
+  SignupBusinessRequest,
+  SignupResult,
+  UserMe,
+  UserMeBlogger,
+  UserMeBusiness,
+} from "./types";
 
-  const res = await fetch(resolveApiUrl(path), {
-    credentials: "include",
-    ...rest,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...headers,
-    },
-  });
-
-  if (!res.ok) {
-    const body = (await res.json().catch(() => null)) as {
-      message?: string;
-    } | null;
-    const message = body?.message ?? res.statusText ?? "Request failed";
-    throw new ApiClientError(res.status, message);
-  }
-
-  if (res.status === 204) return undefined as T;
-  return res.json() as Promise<T>;
-}
-
-/** 배열 또는 { content | data | items } 형태 응답을 배열로 정규화 */
-export function unwrapList<T>(payload: unknown): T[] {
-  if (Array.isArray(payload)) return payload as T[];
-  if (payload && typeof payload === "object") {
-    const record = payload as Record<string, unknown>;
-    for (const key of [
-      "content",
-      "data",
-      "items",
-      "campaigns",
-      "missions",
-      "histories",
-    ]) {
-      if (Array.isArray(record[key])) return record[key] as T[];
-    }
-  }
-  return [];
-}
+export { isApiEnvelope, unwrapEnvelope, envelopeMessage } from "./envelope";

@@ -23,9 +23,17 @@ function formatReward(amount: number): string {
   return `${amount.toLocaleString()} P`;
 }
 
-function formatDeadline(raw?: string, status?: string): string {
+function formatDeadline(
+  raw?: string,
+  status?: string,
+  dDay?: number,
+): string {
   if (status?.toUpperCase() === "CLOSED" || status?.toUpperCase() === "ENDED") {
     return "마감";
+  }
+  if (typeof dDay === "number") {
+    if (dDay <= 0) return "마감";
+    return `D-${dDay}`;
   }
   if (!raw) return "D-7";
   if (raw.startsWith("D-")) return raw;
@@ -37,12 +45,16 @@ function formatDeadline(raw?: string, status?: string): string {
 }
 
 export function mapApiCampaign(dto: ApiCampaign): Campaign {
-  const id = String(dto.id ?? dto.campaignId ?? "");
+  const id = String(dto.id ?? dto.campaignId ?? dto.campaign_id ?? "");
   const title = dto.title ?? dto.name ?? "캠페인";
   const brand = dto.brandName ?? dto.brand ?? "";
-  const rewardAmount = dto.rewardAmount ?? dto.reward ?? dto.point ?? 0;
-  const current = dto.currentParticipants ?? dto.participantCount ?? dto.current ?? 0;
-  const total = dto.maxParticipants ?? dto.capacity ?? dto.total ?? 1;
+  const rewardAmount =
+    dto.rewardAmount ?? dto.reward_point ?? dto.reward ?? dto.point ?? 0;
+  const total = dto.maxParticipants ?? dto.total_slots ?? dto.capacity ?? dto.total ?? 1;
+  const current =
+    dto.remaining_slots !== undefined
+      ? total - dto.remaining_slots
+      : (dto.currentParticipants ?? dto.participantCount ?? dto.current ?? 0);
 
   return {
     id,
@@ -58,18 +70,22 @@ export function mapApiCampaign(dto: ApiCampaign): Campaign {
       dto.imageUrl ??
       dto.image ??
       "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80",
-    deadline: formatDeadline(dto.deadline ?? dto.endDate, dto.status),
+    deadline: formatDeadline(
+      dto.deadline ?? dto.endDate,
+      dto.status,
+      dto.d_day,
+    ),
   };
 }
 
 export function mapApiMission(dto: ApiMission): Mission {
-  const id = String(dto.escrowId ?? dto.id ?? dto.missionId ?? "");
+  const id = String(
+    dto.escrowId ?? dto.escrow_id ?? dto.id ?? dto.missionId ?? "",
+  );
   const rewardAmount =
     typeof dto.reward === "number"
       ? dto.reward
-      : typeof dto.rewardAmount === "number"
-        ? dto.rewardAmount
-        : 0;
+      : (dto.rewardAmount ?? dto.reward_point ?? dto.rewardPoint ?? 0);
 
   return {
     id,
@@ -87,17 +103,23 @@ export function mapApiMission(dto: ApiMission): Mission {
 
 function mapMissionStatus(raw?: string): Mission["status"] {
   const s = raw?.toUpperCase() ?? "";
-  if (["DONE", "COMPLETED", "APPROVED", "FINISHED"].includes(s)) return "DONE";
-  if (["IN_PROGRESS", "ACTIVE", "SUBMITTED", "PENDING_REVIEW"].includes(s)) {
+  if (["RELEASED", "DONE", "COMPLETED", "APPROVED", "FINISHED"].includes(s)) {
+    return "DONE";
+  }
+  if (["SUBMITTED", "IN_PROGRESS", "ACTIVE", "PENDING_REVIEW"].includes(s)) {
     return "IN_PROGRESS";
   }
+  if (s === "CANCELED" || s === "CANCELLED") return "CANCELED";
   return "LOCKED";
 }
 
 export function mapApiWalletHistory(dto: ApiWalletHistory): WalletHistory {
   const amount = dto.amount ?? 0;
+  const apiType = dto.type?.toUpperCase() ?? "";
   const type =
-    dto.type?.toLowerCase() === "withdraw" || amount < 0
+    apiType === "REFUND" ||
+    apiType === "WITHDRAW" ||
+    (apiType !== "CHARGE" && apiType !== "RELEASE" && amount < 0)
       ? "withdraw"
       : "deposit";
 
@@ -122,6 +144,9 @@ export function mapApiWalletHistory(dto: ApiWalletHistory): WalletHistory {
 export function extractMissionGuidelines(dto: ApiCampaign): string[] {
   if (Array.isArray(dto.missionGuides) && dto.missionGuides.length > 0) {
     return dto.missionGuides;
+  }
+  if (Array.isArray(dto.requirements) && dto.requirements.length > 0) {
+    return dto.requirements;
   }
   if (Array.isArray(dto.guidelines) && dto.guidelines.length > 0) {
     return dto.guidelines;

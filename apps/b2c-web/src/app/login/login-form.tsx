@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -58,7 +59,7 @@ export function LoginForm() {
           type="email"
           placeholder="blogger@example.com"
           autoComplete="email"
-          className="h-12 rounded-xl bg-white"
+          className="h-12 rounded-xl border-0 bg-[#f2f4f6] shadow-none ring-1 ring-foreground/8 focus-visible:ring-primary/40"
           {...register("email")}
         />
         {errors.email && (
@@ -75,7 +76,7 @@ export function LoginForm() {
           type="password"
           placeholder="4자 이상"
           autoComplete="current-password"
-          className="h-12 rounded-xl bg-white"
+          className="h-12 rounded-xl border-0 bg-[#f2f4f6] shadow-none ring-1 ring-foreground/8 focus-visible:ring-primary/40"
           {...register("password")}
         />
         {errors.password && (
@@ -94,15 +95,27 @@ export function LoginForm() {
       <Button
         type="submit"
         disabled={isSubmitting}
-        className="h-12 w-full rounded-xl text-base font-semibold"
+        className="h-12 w-full rounded-xl bg-primary text-base font-semibold shadow-[0_4px_14px_rgba(49,130,246,0.35)] hover:bg-primary/90"
         size="lg"
       >
-        {isSubmitting ? "로그인 중…" : "시작하기"}
+        {isSubmitting ? "로그인 중…" : "로그인"}
       </Button>
 
-      <p className="text-center text-xs text-muted-foreground">
-        데모: 아무 이메일 + 비밀번호 4자 이상
+      <p className="text-center text-sm text-muted-foreground">
+        계정이 없으신가요?{" "}
+        <Link
+          href="/signup"
+          className="font-medium text-primary underline-offset-4 hover:underline"
+        >
+          회원가입
+        </Link>
       </p>
+
+      {process.env.NODE_ENV === "development" ? (
+        <p className="text-center text-xs text-muted-foreground">
+          개발 모드: API 미설정 시 데모 로그인
+        </p>
+      ) : null}
     </form>
   );
 }

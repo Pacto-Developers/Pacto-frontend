@@ -17,6 +17,7 @@
     "@pacto/assets": "*",
     "@pacto/auth": "*",
     "@pacto/types": "*",
+    "@portone/browser-sdk": "^0.1.8",
     "@tanstack/react-query": "^5.80.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

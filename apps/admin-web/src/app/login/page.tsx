@@ -12,7 +12,7 @@ export default function LoginPage() {
         </div>
         <p className="mb-2 text-center text-lg font-semibold">Admin</p>
         <p className="mb-8 text-center text-sm text-slate-500">
-          개발용 데모 로그인 — Role을 선택하세요
+          광고주는 BUSINESS 계정으로 로그인 · 대행사는 데모 Role 선택
         </p>
         <Suspense fallback={<p className="text-sm text-slate-500">로딩 중…</p>}>
           <LoginForm roles={ROLES} labels={ROLE_LABELS} />

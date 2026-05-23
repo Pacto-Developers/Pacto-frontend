@@ -1,14 +1,17 @@
 "use client";
 
+import { CampaignListSkeleton } from "@/components/explore/campaign-list-skeleton";
+import { ExploreWelcomeBanner } from "@/components/explore/explore-welcome-banner";
 import {
   EXPLORE_HEADER_HEIGHT,
   ExplorePageHeader,
 } from "@/components/explore/explore-page-header";
+import { EmptyState } from "@/components/trust/empty-state";
+import { TrustNotice } from "@/components/trust/trust-notice";
 import { CampaignListCard } from "@/components/mobile/campaign-list-card";
 import type { Campaign } from "@/lib/mock-data";
 import { selectCampaignList, useCampaigns } from "@/lib/api/hooks";
-import { Loader2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 
 export function ExploreContent() {
   const [category, setCategory] = useState<string>("전체");
@@ -43,14 +46,23 @@ export function ExploreContent() {
         className="flex flex-col gap-3 px-4"
         style={{ paddingTop: EXPLORE_HEADER_HEIGHT + 16 }}
       >
+        <Suspense fallback={null}>
+          <ExploreWelcomeBanner />
+        </Suspense>
+
+        <TrustNotice>
+          캠페인 보상은 미션 완료·광고주 승인 후 에스크로에서 정산돼요.
+        </TrustNotice>
+
         {isLoading ? (
-          <div className="flex justify-center py-16">
-            <Loader2 className="size-8 animate-spin text-muted-foreground" />
-          </div>
+          <CampaignListSkeleton />
         ) : filtered.length === 0 ? (
-          <p className="py-12 text-center text-muted-foreground">
-            해당 카테고리에 캠페인이 없습니다.
-          </p>
+          <EmptyState
+            message="해당 조건의 캠페인이 없어요"
+            description="다른 카테고리나 정렬을 바꿔 보세요"
+            actionLabel="전체 보기"
+            onAction={() => setCategory("전체")}
+          />
         ) : (
           filtered.map((campaign, index) => (
             <CampaignListCard
@@ -60,12 +72,6 @@ export function ExploreContent() {
               closed={campaign.current >= campaign.total && campaign.total > 0}
             />
           ))
-        )}
-
-        {!isLoading && (
-          <div className="flex items-center justify-center py-6">
-            <Loader2 className="size-6 animate-spin text-muted-foreground" />
-          </div>
         )}
       </main>
     </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { mobileFixedClass } from "@/lib/mobile-layout";
 import { cn } from "@/lib/utils";
 import {
   ClipboardCheck,
@@ -17,7 +18,7 @@ const items = [
   { href: "/profile", label: "프로필", icon: User },
 ] as const;
 
-const hiddenPaths = ["/", "/login"];
+const hiddenPaths = ["/", "/login", "/signup"];
 const hiddenPrefixes = ["/campaigns/"];
 
 function shouldHideNav(pathname: string): boolean {
@@ -33,7 +34,12 @@ export function BottomNav() {
   }
 
   return (
-    <nav className="fixed bottom-0 left-1/2 z-50 flex h-[72px] w-full max-w-[480px] -translate-x-1/2 items-center justify-around rounded-t-2xl bg-white px-6 shadow-[0_-4px_20px_rgba(0,0,0,0.04)]">
+    <nav
+      className={cn(
+        mobileFixedClass,
+        "bottom-0 flex min-h-[72px] items-center justify-around rounded-t-2xl bg-white px-6 pb-[env(safe-area-inset-bottom,0px)] pt-2 shadow-[0_-4px_20px_rgba(0,0,0,0.04)]",
+      )}
+    >
       {items.map(({ href, label, icon: Icon }) => {
         const active =
           pathname === href || pathname.startsWith(`${href}/`);

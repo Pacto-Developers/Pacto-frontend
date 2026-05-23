@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import { BottomNav } from "@/components/bottom-nav";
+import { MobileShell } from "@/components/mobile/mobile-shell";
 import { Providers } from "@/components/providers";
+import { letterboxBgClass } from "@/lib/mobile-layout";
 import "./globals.css";
 
 const geist = Geist({
@@ -39,14 +41,16 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body
-        className="min-h-full bg-[#f2f4f6] text-foreground"
+        className={`min-h-dvh text-foreground antialiased ${letterboxBgClass}`}
         suppressHydrationWarning
       >
         <Providers>
-          <div className="mx-auto flex min-h-full w-full max-w-[480px] flex-col">
-            <main className="flex-1 pb-[90px]">{children}</main>
+          <MobileShell>
+            <main className="flex-1 pb-[calc(90px+env(safe-area-inset-bottom,0px))]">
+              {children}
+            </main>
             <BottomNav />
-          </div>
+          </MobileShell>
         </Providers>
       </body>
     </html>

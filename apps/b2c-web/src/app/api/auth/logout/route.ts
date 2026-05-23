@@ -1,8 +1,9 @@
-import { AUTH_COOKIE } from "@/lib/auth";
+import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function POST() {
   const response = NextResponse.json({ ok: true });
-  response.cookies.delete(AUTH_COOKIE);
+  response.cookies.delete(ACCESS_TOKEN_COOKIE);
+  response.cookies.delete(REFRESH_TOKEN_COOKIE);
   return response;
 }

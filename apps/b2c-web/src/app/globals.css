@@ -47,8 +47,13 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+html,
 body {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+html {
+  background-color: #e5e8eb;
 }
 
 .hide-scrollbar::-webkit-scrollbar {
@@ -64,6 +69,10 @@ body {
   /* Toss-style tokens (structure.md) */
   --toss-blue: #3182f6;
   --toss-bg: #f2f4f6;
+  --money-positive: #3182f6;
+  --money-negative: #191f28;
+  --status-warning: #f59e0b;
+  --status-success: #16a34a;
   --background: #f2f4f6;
   --foreground: #191f28;
   --card: #ffffff;
